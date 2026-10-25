@@ -4,6 +4,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "IClock.h"
 #include "IUnitOfWork.h"
@@ -19,6 +20,10 @@ public:
 
     void mark(Session& s, int submissionId, double rawMark, const std::string& feedback);
     void remark(Session& s, int submissionId, double rawMark, const std::string& reason);
+
+    // Added during coding: lets the lecturer menu list the submissions of one
+    // of their assignments (SUBMITTED, LATE and MARKED) so they can pick one.
+    std::vector<Submission> submissionsFor(Session& s, int assignmentId);
 
 private:
     Submission findSubmission(int submissionId);

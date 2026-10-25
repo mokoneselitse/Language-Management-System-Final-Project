@@ -71,3 +71,22 @@ if(MSVC)
 else()
   target_compile_options(lms_logic PRIVATE -Wall -Wextra -Wpedantic)
 endif()
+
+# ---------------------------------------------------------------- presentation layer + program
+add_executable(lms
+  src/main.cpp
+  src/presentation/RoleMenu.cpp
+  src/presentation/StudentMenu.cpp
+  src/presentation/LecturerMenu.cpp
+  src/presentation/HodMenu.cpp
+  src/presentation/AdminMenu.cpp
+  src/presentation/MenuFactory.cpp
+)
+target_include_directories(lms PRIVATE src/presentation)
+target_link_libraries(lms PRIVATE lms_logic)
+
+if(MSVC)
+  target_compile_options(lms PRIVATE /W4)
+else()
+  target_compile_options(lms PRIVATE -Wall -Wextra -Wpedantic)
+endif()

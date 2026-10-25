@@ -82,3 +82,20 @@ void MarkingService::remark(Session& s, int submissionId, double rawMark,
                                 finalMark, reason));
     });
 }
+
+std::vector<Submission> MarkingService::submissionsFor(Session& s, int assignmentId) {
+    s.require(Action::MARK_SUBMISSION);
+    std::optional<Assignment> a = assignments.findById(assignmentId);
+    if (!a) throw NotFoundError("No assignment with that id.");
+    if (a->getCreatedBy() != s.user().getId()) {
+        throw AccessDeniedError("This is not one of your assignments.");
+    }
+    std::vector<Submission> list;
+    for (SubmissionStatus st :
+         {SubmissionStatus::SUBMITTED, SubmissionStatus::LATE, SubmissionStatus::MARKED}) {
+        for (const Submission& sub : submissions.findByAssignmentAndStatus(assignmentId, st)) {
+            list.push_back(sub);
+        }
+    }
+    return list;
+}

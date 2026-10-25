@@ -25,6 +25,7 @@ protected:
     std::string readLine(const std::string& prompt);
     // Extra input helpers added during coding:
     double readDouble(const std::string& prompt);
+    std::string readPassword(const std::string& prompt);  // not shown on screen
     Timestamp readDateTime(const std::string& prompt);  // "YYYY-MM-DD HH:MM", local time
     static std::string formatTime(Timestamp t);
     void printAuditLog(const std::vector<AuditEntry>& entries);  // used by HoD and Admin

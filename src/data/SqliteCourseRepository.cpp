@@ -70,3 +70,53 @@ std::optional<int> SqliteCourseRepository::departmentOfHod(int hodId) {
     if (!st.step()) return std::nullopt;
     return st.columnInt(0);
 }
+
+void SqliteCourseRepository::updateCourse(int id, const std::string& code,
+                                          const std::string& title) {
+    Statement st = db.prepare("UPDATE course SET code = ?, title = ? WHERE course_id = ?;");
+    st.bind(1, code).bind(2, title).bind(3, id);
+    st.step();
+}
+
+void SqliteCourseRepository::setDepartmentHod(int departmentId, std::optional<int> hodId) {
+    Statement st = db.prepare("UPDATE department SET hod_user_id = ? WHERE department_id = ?;");
+    bindOptional(st, 1, hodId);
+    st.bind(2, departmentId);
+    st.step();
+}
+
+std::optional<Department> SqliteCourseRepository::findDepartment(int id) {
+    Statement st = db.prepare(
+        "SELECT department_id, name, hod_user_id FROM department WHERE department_id = ?;");
+    st.bind(1, id);
+    if (!st.step()) return std::nullopt;
+    return Department(st.columnInt(0), st.columnText(1), readOptionalInt(st, 2));
+}
+
+std::vector<Department> SqliteCourseRepository::listDepartments() {
+    Statement st =
+        db.prepare("SELECT department_id, name, hod_user_id FROM department ORDER BY name;");
+    std::vector<Department> list;
+    while (st.step()) {
+        list.emplace_back(st.columnInt(0), st.columnText(1), readOptionalInt(st, 2));
+    }
+    return list;
+}
+
+std::vector<Course> SqliteCourseRepository::listCourses() {
+    Statement st = db.prepare(
+        "SELECT course_id, code, title, department_id, lecturer_id FROM course ORDER BY code;");
+    std::vector<Course> list;
+    while (st.step()) list.push_back(readCourse(st));
+    return list;
+}
+
+std::vector<Course> SqliteCourseRepository::coursesForLecturer(int lecturerId) {
+    Statement st = db.prepare(
+        "SELECT course_id, code, title, department_id, lecturer_id FROM course "
+        "WHERE lecturer_id = ? ORDER BY code;");
+    st.bind(1, lecturerId);
+    std::vector<Course> list;
+    while (st.step()) list.push_back(readCourse(st));
+    return list;
+}

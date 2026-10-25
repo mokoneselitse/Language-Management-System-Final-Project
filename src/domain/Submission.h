@@ -26,10 +26,12 @@ public:
 
     // ---- operations from the class diagram
     void resubmit(const std::string& path, Timestamp at);            // SUBMITTED -> SUBMITTED
+    // SUBMITTED/LATE/MARKED -> MARKED
     void recordMark(double raw, double finalMark, const std::string& feedback, int by,
-                    Timestamp at);                                    // SUBMITTED/LATE/MARKED -> MARKED
-    void approve(int by, Timestamp at);                               // MARKED -> MODERATED
-    void adjustMark(double newMark, int by, Timestamp at);            // MARKED/MODERATED -> MODERATED
+                    Timestamp at);
+    void approve(int by, Timestamp at);                     // MARKED -> MODERATED
+    // MARKED/MODERATED -> MODERATED
+    void adjustMark(double newMark, int by, Timestamp at);
     void release(Timestamp at);                                       // MODERATED -> RELEASED
     bool isFeedbackVisibleToStudent() const;                          // from MARKED onwards (C1)
     bool isMarkVisibleToStudent() const;                              // only RELEASED (FR13)

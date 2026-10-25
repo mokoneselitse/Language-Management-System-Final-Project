@@ -68,3 +68,13 @@ std::vector<Course> AssignmentService::coursesForStudent(Session& s) {
     s.require(Action::VIEW_COURSES);
     return courses.coursesForStudent(s.user().getId());
 }
+
+std::vector<Course> AssignmentService::coursesForLecturer(Session& s) {
+    s.require(Action::VIEW_OWN_ASSIGNMENTS);
+    return courses.coursesForLecturer(s.user().getId());
+}
+
+std::optional<Extension> AssignmentService::myExtension(Session& s, int assignmentId) {
+    s.require(Action::VIEW_ASSIGNMENTS);
+    return assignments.findExtension(assignmentId, s.user().getId());
+}

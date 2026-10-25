@@ -17,3 +17,9 @@ Session AuthService::login(const std::string& username, const std::string& passw
     }
     return Session(std::move(user));
 }
+
+std::string AuthService::nameOf(Session& /*s*/, int userId) {
+    std::unique_ptr<User> user = users.findById(userId);
+    if (user == nullptr) return "(unknown user " + std::to_string(userId) + ")";
+    return user->getFullName();
+}

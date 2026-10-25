@@ -51,3 +51,23 @@ void SqliteUserRepository::setActive(int id, bool active) {
     st.bind(1, active ? 1 : 0).bind(2, id);
     st.step();
 }
+
+void SqliteUserRepository::update(int id, const std::string& username,
+                                  const std::string& fullName) {
+    Statement st = db.prepare("UPDATE users SET username = ?, full_name = ? WHERE user_id = ?;");
+    st.bind(1, username).bind(2, fullName).bind(3, id);
+    st.step();
+}
+
+void SqliteUserRepository::setPasswordHash(int id, const std::string& hash) {
+    Statement st = db.prepare("UPDATE users SET password_hash = ? WHERE user_id = ?;");
+    st.bind(1, hash).bind(2, id);
+    st.step();
+}
+
+std::vector<std::unique_ptr<User>> SqliteUserRepository::listAll() {
+    Statement st = db.prepare(std::string(SELECT_USER) + "ORDER BY u.role, u.username;");
+    std::vector<std::unique_ptr<User>> list;
+    while (st.step()) list.push_back(readUser(st));
+    return list;
+}

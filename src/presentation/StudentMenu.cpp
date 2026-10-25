@@ -24,8 +24,12 @@ bool StudentMenu::handle(int choice) {
             if (list.empty()) out << "No assignments.\n";
             for (const Assignment& a : list) {
                 out << "  [" << a.getId() << "] " << a.getTitle()
-                    << "  | deadline " << formatTime(a.getDeadline())
-                    << "  | max mark " << a.getMaxMark() << "\n";
+                    << "  | deadline " << formatTime(a.getDeadline());
+                std::optional<Extension> ext = services.assignments.myExtension(session, a.getId());
+                if (ext) {
+                    out << " (extended to " << formatTime(ext->getNewDeadline()) << " for you)";
+                }
+                out << "  | max mark " << a.getMaxMark() << "\n";
             }
             return true;
         }

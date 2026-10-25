@@ -17,7 +17,7 @@ bool HodMenu::handle(int choice) {
             if (list.empty()) out << "Nothing is waiting for moderation.\n";
             for (const Submission& s : list) {
                 out << "  [" << s.getId() << "] assignment " << s.getAssignmentId()
-                    << ", student " << s.getStudentId()
+                    << ", " << services.auth.nameOf(session, s.getStudentId())
                     << "  | raw " << s.getRawMark().value_or(0)
                     << "  | days late " << s.getDaysLate()
                     << "  | final " << s.getMark().value_or(0)

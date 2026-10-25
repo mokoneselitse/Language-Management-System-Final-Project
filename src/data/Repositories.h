@@ -10,6 +10,7 @@
 #include "Assignment.h"
 #include "AuditEntry.h"
 #include "Course.h"
+#include "Department.h"
 #include "Extension.h"
 #include "StudentResult.h"
 #include "Submission.h"
@@ -24,6 +25,10 @@ public:
     virtual int add(Role role, const std::string& username, const std::string& fullName,
                     const std::string& hash) = 0;
     virtual void setActive(int id, bool active) = 0;
+    // Added during coding (FR01 edit, admin user list):
+    virtual void update(int id, const std::string& username, const std::string& fullName) = 0;
+    virtual void setPasswordHash(int id, const std::string& hash) = 0;
+    virtual std::vector<std::unique_ptr<User>> listAll() = 0;
 };
 
 class ICourseRepository {
@@ -37,6 +42,13 @@ public:
     virtual bool isEnrolled(int studentId, int courseId) = 0;
     virtual std::vector<Course> coursesForStudent(int studentId) = 0;
     virtual std::optional<int> departmentOfHod(int hodId) = 0;
+    // Added during coding (FR02 manage, lecturer course list):
+    virtual void updateCourse(int id, const std::string& code, const std::string& title) = 0;
+    virtual void setDepartmentHod(int departmentId, std::optional<int> hodId) = 0;
+    virtual std::optional<Department> findDepartment(int id) = 0;
+    virtual std::vector<Department> listDepartments() = 0;
+    virtual std::vector<Course> listCourses() = 0;
+    virtual std::vector<Course> coursesForLecturer(int lecturerId) = 0;
 };
 
 class IAssignmentRepository {

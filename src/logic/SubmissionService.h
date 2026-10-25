@@ -11,8 +11,10 @@
 
 class SubmissionService {
 public:
+    // storageFolder: where copies of submitted files are kept (e.g. "submissions").
     SubmissionService(IAssignmentRepository& assignments, ICourseRepository& courses,
-                      ISubmissionRepository& submissions, IClock& clock);
+                      ISubmissionRepository& submissions, IClock& clock,
+                      std::string storageFolder);
 
     Submission submit(Session& s, int assignmentId, const std::string& filePath);
     std::vector<StudentResult> resultsFor(Session& s);
@@ -22,9 +24,14 @@ public:
 
 private:
     Timestamp effectiveDeadline(const Assignment& a, int studentId);
+    // Copies the student's file into the storage folder and returns the new path,
+    // so the submission is kept even if the student later deletes their file.
+    std::string storeFile(const std::string& sourcePath, int assignmentId, int studentId,
+                          int attemptNo);
 
     IAssignmentRepository& assignments;
     ICourseRepository& courses;
     ISubmissionRepository& submissions;
     IClock& clock;
+    std::string storageFolder;
 };

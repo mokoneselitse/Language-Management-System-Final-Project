@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include "Errors.h"
+#include "HiddenInput.h"
 
 RoleMenu::RoleMenu(Session& session, ServiceRegistry& services, std::istream& in,
                    std::ostream& out)
@@ -22,6 +23,9 @@ void RoleMenu::run() {
             // Every rule the services break comes back as an LmsError,
             // so the user sees the message and the menu carries on.
             out << "Error: " << e.what() << "\n";
+        } catch (const std::exception& e) {
+            // Anything unexpected (e.g. from the standard library) must not crash the program.
+            out << "Unexpected error: " << e.what() << "\n";
         }
         if (!in) keepGoing = false;  // input closed (e.g. Ctrl+Z / Ctrl+D)
     }
@@ -33,6 +37,11 @@ std::string RoleMenu::readLine(const std::string& prompt) {
     if (!std::getline(in, line)) return "";
     if (!line.empty() && line.back() == '\r') line.pop_back();  // Windows line endings
     return line;
+}
+
+std::string RoleMenu::readPassword(const std::string& prompt) {
+    out << prompt;
+    return readHiddenLine(in, out);
 }
 
 int RoleMenu::readInt(const std::string& prompt) {
@@ -91,7 +100,7 @@ void RoleMenu::printAuditLog(const std::vector<AuditEntry>& entries) {
     if (entries.empty()) out << "No changes recorded for this submission.\n";
     for (const AuditEntry& e : entries) {
         out << "  " << formatTime(e.getChangedAt()) << "  " << toString(e.getAction())
-            << " by user " << e.getChangedBy() << ": ";
+            << " by " << services.auth.nameOf(session, e.getChangedBy()) << ": ";
         if (e.getOldMark()) out << *e.getOldMark(); else out << "-";
         out << " -> " << e.getNewMark() << "  (" << e.getReason() << ")\n";
     }

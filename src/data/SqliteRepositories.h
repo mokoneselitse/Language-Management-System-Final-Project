@@ -13,6 +13,9 @@ public:
     int add(Role role, const std::string& username, const std::string& fullName,
             const std::string& hash) override;
     void setActive(int id, bool active) override;
+    void update(int id, const std::string& username, const std::string& fullName) override;
+    void setPasswordHash(int id, const std::string& hash) override;
+    std::vector<std::unique_ptr<User>> listAll() override;
 
 private:
     SqliteDatabase& db;
@@ -29,6 +32,12 @@ public:
     bool isEnrolled(int studentId, int courseId) override;
     std::vector<Course> coursesForStudent(int studentId) override;
     std::optional<int> departmentOfHod(int hodId) override;
+    void updateCourse(int id, const std::string& code, const std::string& title) override;
+    void setDepartmentHod(int departmentId, std::optional<int> hodId) override;
+    std::optional<Department> findDepartment(int id) override;
+    std::vector<Department> listDepartments() override;
+    std::vector<Course> listCourses() override;
+    std::vector<Course> coursesForLecturer(int lecturerId) override;
 
 private:
     SqliteDatabase& db;

@@ -81,6 +81,7 @@ add_executable(lms
   src/presentation/HodMenu.cpp
   src/presentation/AdminMenu.cpp
   src/presentation/MenuFactory.cpp
+  src/presentation/HiddenInput.cpp
 )
 target_include_directories(lms PRIVATE src/presentation)
 target_link_libraries(lms PRIVATE lms_logic)

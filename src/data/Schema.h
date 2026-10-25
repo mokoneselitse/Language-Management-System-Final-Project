@@ -64,7 +64,8 @@ CREATE TABLE IF NOT EXISTS submission (
     file_path     TEXT NOT NULL CHECK (length(file_path) > 0),
     submitted_at  INTEGER NOT NULL,
     attempt_no    INTEGER NOT NULL DEFAULT 1 CHECK (attempt_no >= 1),
-    status        TEXT NOT NULL CHECK (status IN ('SUBMITTED','LATE','MARKED','MODERATED','RELEASED')),
+    status        TEXT NOT NULL
+                  CHECK (status IN ('SUBMITTED','LATE','MARKED','MODERATED','RELEASED')),
     days_late     INTEGER NOT NULL DEFAULT 0 CHECK (days_late >= 0),
     raw_mark      REAL CHECK (raw_mark IS NULL OR raw_mark >= 0),
     mark          REAL CHECK (mark IS NULL OR mark >= 0),
@@ -77,7 +78,8 @@ CREATE TABLE IF NOT EXISTS submission (
     UNIQUE (assignment_id, student_id),
     CHECK ((status = 'LATE') = (days_late > 0) OR status IN ('MARKED','MODERATED','RELEASED')),
     CHECK (status IN ('SUBMITTED','LATE')
-           OR (raw_mark IS NOT NULL AND mark IS NOT NULL AND marked_by IS NOT NULL AND marked_at IS NOT NULL)),
+           OR (raw_mark IS NOT NULL AND mark IS NOT NULL
+               AND marked_by IS NOT NULL AND marked_at IS NOT NULL)),
     CHECK (status IN ('MODERATED','RELEASED') OR (moderated_by IS NULL AND moderated_at IS NULL)),
     CHECK (status = 'RELEASED' OR released_at IS NULL),
     CHECK (status <> 'RELEASED' OR released_at IS NOT NULL)

@@ -69,8 +69,8 @@ void ModerationService::adjust(Session& s, int submissionId, double newMark,
     tx.runInTransaction([&] {
         sub.adjustMark(newMark, hodId, now);  // MARKED/MODERATED -> MODERATED
         submissions.update(sub);
-        audit.append(
-            AuditEntry(0, sub.getId(), hodId, now, AuditAction::MODERATE, oldMark, newMark, reason));
+        audit.append(AuditEntry(0, sub.getId(), hodId, now, AuditAction::MODERATE, oldMark,
+                                newMark, reason));
     });
 }
 

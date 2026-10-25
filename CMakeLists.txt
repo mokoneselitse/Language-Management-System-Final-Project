@@ -19,3 +19,55 @@ if(MSVC)
 else()
   target_compile_options(lms_domain PRIVATE -Wall -Wextra -Wpedantic)
 endif()
+
+# ---------------------------------------------------------------- data layer
+find_package(SQLite3 REQUIRED)
+find_path(SODIUM_INCLUDE_DIR sodium.h REQUIRED)
+find_library(SODIUM_LIBRARY NAMES sodium libsodium REQUIRED)
+
+add_library(lms_data STATIC
+  src/data/Statement.cpp
+  src/data/SqliteDatabase.cpp
+  src/data/SqliteUserRepository.cpp
+  src/data/SqliteCourseRepository.cpp
+  src/data/SqliteAssignmentRepository.cpp
+  src/data/SqliteSubmissionRepository.cpp
+  src/data/SqliteAuditRepository.cpp
+  src/data/UserFactory.cpp
+  src/data/SodiumPasswordHasher.cpp
+)
+target_include_directories(lms_data PUBLIC src/data PRIVATE ${SODIUM_INCLUDE_DIR})
+# Newer CMake calls the SQLite target SQLite3::SQLite3, older CMake calls it SQLite::SQLite3.
+if(TARGET SQLite3::SQLite3)
+  set(SQLITE_TARGET SQLite3::SQLite3)
+else()
+  set(SQLITE_TARGET SQLite::SQLite3)
+endif()
+target_link_libraries(lms_data PUBLIC lms_domain ${SQLITE_TARGET} ${SODIUM_LIBRARY})
+
+if(MSVC)
+  target_compile_options(lms_data PRIVATE /W4)
+else()
+  target_compile_options(lms_data PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
+# ---------------------------------------------------------------- business logic layer
+add_library(lms_logic STATIC
+  src/logic/LatePenalty.cpp
+  src/logic/Session.cpp
+  src/logic/AuthService.cpp
+  src/logic/AdminService.cpp
+  src/logic/AssignmentService.cpp
+  src/logic/SubmissionService.cpp
+  src/logic/MarkingService.cpp
+  src/logic/ModerationService.cpp
+  src/logic/AuditService.cpp
+)
+target_include_directories(lms_logic PUBLIC src/logic)
+target_link_libraries(lms_logic PUBLIC lms_data)
+
+if(MSVC)
+  target_compile_options(lms_logic PRIVATE /W4)
+else()
+  target_compile_options(lms_logic PRIVATE -Wall -Wextra -Wpedantic)
+endif()

@@ -91,3 +91,25 @@ if(MSVC)
 else()
   target_compile_options(lms PRIVATE -Wall -Wextra -Wpedantic)
 endif()
+
+# ---------------------------------------------------------------- automated tests (Catch2)
+option(LMS_BUILD_TESTS "Build the automated tests" ON)
+if(LMS_BUILD_TESTS)
+  find_package(Catch2 3 QUIET)
+  if(Catch2_FOUND)
+    enable_testing()
+    add_executable(lms_tests
+      tests/unit/test_late_penalty.cpp
+      tests/unit/test_days_late.cpp
+      tests/unit/test_submission_state.cpp
+      tests/unit/test_users.cpp
+      tests/unit/test_assignment.cpp
+    )
+    target_include_directories(lms_tests PRIVATE tests)
+    target_link_libraries(lms_tests PRIVATE lms_logic Catch2::Catch2WithMain)
+    include(Catch)
+    catch_discover_tests(lms_tests)
+  else()
+    message(STATUS "Catch2 not found - the tests will not be built.")
+  endif()
+endif()

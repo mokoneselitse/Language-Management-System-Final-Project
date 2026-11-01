@@ -5,7 +5,10 @@
 #include "Errors.h"
 
 SodiumPasswordHasher::SodiumPasswordHasher()
-    : opsLimit(crypto_pwhash_OPSLIMIT_INTERACTIVE), memLimit(crypto_pwhash_MEMLIMIT_INTERACTIVE) {
+    : SodiumPasswordHasher(crypto_pwhash_OPSLIMIT_INTERACTIVE, crypto_pwhash_MEMLIMIT_INTERACTIVE) {}
+
+SodiumPasswordHasher::SodiumPasswordHasher(unsigned long long opsLimit, std::size_t memLimit)
+    : opsLimit(opsLimit), memLimit(memLimit) {
     if (sodium_init() < 0) {  // must be called once before using libsodium
         throw LmsError("Could not start libsodium.");
     }

@@ -10,7 +10,10 @@
 
 class SodiumPasswordHasher : public IPasswordHasher {
 public:
+    // Uses libsodium's "interactive" cost settings. The tests pass the minimum
+    // settings instead (still Argon2id, just faster).
     SodiumPasswordHasher();
+    SodiumPasswordHasher(unsigned long long opsLimit, std::size_t memLimit);
     std::string hash(const std::string& password) override;
     bool verify(const std::string& password, const std::string& hash) override;
 

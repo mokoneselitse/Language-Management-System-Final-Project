@@ -5,6 +5,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Coverage build (Phase 5): cmake -S . -B build-cov -G Ninja -DLMS_COVERAGE=ON
+option(LMS_COVERAGE "Build with gcov coverage flags" OFF)
+if(LMS_COVERAGE)
+  add_compile_options(--coverage -O0)
+  add_link_options(--coverage)
+endif()
+
 # ---------------------------------------------------------------- domain layer
 add_library(lms_domain STATIC
   src/domain/Types.cpp
@@ -104,8 +111,11 @@ if(LMS_BUILD_TESTS)
       tests/unit/test_submission_state.cpp
       tests/unit/test_users.cpp
       tests/unit/test_assignment.cpp
+      tests/integration/test_admin_auth.cpp
+      tests/integration/test_workflow.cpp
+      tests/integration/test_security.cpp
     )
-    target_include_directories(lms_tests PRIVATE tests)
+    target_include_directories(lms_tests PRIVATE tests tests/integration)
     target_link_libraries(lms_tests PRIVATE lms_logic Catch2::Catch2WithMain)
     include(Catch)
     catch_discover_tests(lms_tests)
